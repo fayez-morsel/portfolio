@@ -20,6 +20,11 @@
 # production
 /build
 
+# media backups and imported videos
+*.mp4
+*.mov
+*.webm
+
 # misc
 .DS_Store
 *.pem
