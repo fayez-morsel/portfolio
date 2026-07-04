@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+@theme {
+  --font-heading: var(--font-syne), sans-serif;
+  --font-body: var(--font-plus-jakarta), sans-serif;
+  --font-bebas: var(--font-anton), sans-serif;
+  
+  --color-accent-pink: #ff2a7a;
+  --color-accent-violet: #8b5cf6;
+  --color-bg-dark: #09090B;
+  --color-bg-light: #F4F4F5;
+  
+  --animate-marquee: marquee 25s linear infinite;
+  
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+}
+
+/* Custom Styles */
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg-dark);
+}
+
+/* Headline white-to-gray-to-silver gradient */
+.headline-gradient {
+  background: linear-gradient(to bottom, #ffffff 15%, #71717a 65%, #d4d4d8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Subtle blue edge lights for cinematic feel */
+.edge-glow-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100%;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 0% 50%, rgba(59, 130, 246, 0.18) 0%, transparent 70%);
+  z-index: 1;
+}
+
+.edge-glow-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 100% 50%, rgba(59, 130, 246, 0.18) 0%, transparent 70%);
+  z-index: 1;
+}
+
+/* Neon Gradient CTA Button with soft glow */
+.neon-btn-gradient {
+  background: linear-gradient(to right, #000000 8%, #db2777 28%, #8b5cf6 60%, #fb923c 100%);
+  border: 2px solid #8b5cf6;
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.45);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+}
+
+.neon-btn-gradient:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 35px rgba(139, 92, 246, 0.65), 0 0 15px rgba(219, 39, 119, 0.3);
+  border-color: #db2777;
+}
+
+/* Text outline styles */
+.text-outline-white {
+  -webkit-text-stroke: 2px #ffffff;
+  color: transparent;
+}
+
+.text-outline-dark {
+  -webkit-text-stroke: 2px #09090B;
+  color: transparent;
+}
+
+/* Glassmorphism Double Border Cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 24px;
+  position: relative;
+}
+
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  left: -2px;
+  right: -2px;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  pointer-events: none;
+}
+
+/* Global Pointer Glow Background */
+.global-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(
+    800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(139, 92, 246, 0.06) 0%,
+    rgba(236, 72, 153, 0.03) 40%,
+    transparent 70%
+  );
+}
+
+/* Lenis Custom Scroll resets */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
