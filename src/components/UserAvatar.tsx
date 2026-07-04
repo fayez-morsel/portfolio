@@ -28,7 +28,7 @@ export default function UserAvatar({ isMobile = false }: { isMobile?: boolean })
   // Image load & background removal canvas processor
   useEffect(() => {
     const img = new Image();
-    img.src = "/assets/user_avatar.jpg";
+    img.src = "/assets/user_avatar.png";
     img.onload = () => {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -46,66 +46,79 @@ export default function UserAvatar({ isMobile = false }: { isMobile?: boolean })
       const imgData = ctx.getImageData(0, 0, w, h);
       const data = imgData.data;
 
-      // Visited flags for flood fill
-      const visited = new Uint8Array(w * h);
-      const queue: [number, number][] = [];
-
-      // Add all boundary pixels to the queue
-      for (let x = 0; x < w; x++) {
-        queue.push([x, 0]);
-        queue.push([x, h - 1]);
-        visited[0 * w + x] = 1;
-        visited[(h - 1) * w + x] = 1;
-      }
-      for (let y = 0; y < h; y++) {
-        queue.push([0, y]);
-        queue.push([w - 1, y]);
-        visited[y * w + 0] = 1;
-        visited[y * w + w - 1] = 1;
-      }
-
-      // Sample top-left corner color
+      // Sample top-left corner color and alpha
       const bgR = data[0];
       const bgG = data[1];
       const bgB = data[2];
+      const bgA = data[3];
 
-      // Detect background color dynamically based on corner sample
-      const isBgColor = (r: number, g: number, b: number) => {
-        const diffR = Math.abs(r - bgR);
-        const diffG = Math.abs(g - bgG);
-        const diffB = Math.abs(b - bgB);
-        return diffR < 15 && diffG < 15 && diffB < 15;
-      };
+      // If the top-left pixel is not already transparent, clear the checkerboard/solid background
+      if (bgA > 10) {
+        // Visited flags for flood fill
+        const visited = new Uint8Array(w * h);
+        const queue: [number, number][] = [];
 
-      // Flood fill traversal
-      let head = 0;
-      while (head < queue.length) {
-        const [cx, cy] = queue[head++];
-        const idx = (cy * w + cx) * 4;
-        const r = data[idx];
-        const g = data[idx + 1];
-        const b = data[idx + 2];
+        // Add all boundary pixels to the queue
+        for (let x = 0; x < w; x++) {
+          queue.push([x, 0]);
+          queue.push([x, h - 1]);
+          visited[0 * w + x] = 1;
+          visited[(h - 1) * w + x] = 1;
+        }
+        for (let y = 0; y < h; y++) {
+          queue.push([0, y]);
+          queue.push([w - 1, y]);
+          visited[y * w + 0] = 1;
+          visited[y * w + w - 1] = 1;
+        }
 
-        // Clear background gray OR the bottom-right sparkle icon region
-        const isSparkleRegion = cx > w * 0.80 && cy > h * 0.80;
+        // Detect background color dynamically based on corner sample and checkerboard patterns
+        const isBgColor = (r: number, g: number, b: number) => {
+          // 1. Checkerboard White (RGB > 205)
+          if (r > 205 && g > 205 && b > 205) return true;
+          // 2. Checkerboard Gray (neutral gray between 150 and 205)
+          if (r > 150 && r < 206 && g > 150 && g < 206 && b > 150 && b < 206) {
+            if (Math.abs(r - g) < 15 && Math.abs(g - b) < 15 && Math.abs(r - b) < 15) {
+              return true;
+            }
+          }
+          // 3. Fallback: Solid background color dynamic sample
+          const diffR = Math.abs(r - bgR);
+          const diffG = Math.abs(g - bgG);
+          const diffB = Math.abs(b - bgB);
+          return diffR < 15 && diffG < 15 && diffB < 15;
+        };
 
-        if (isBgColor(r, g, b) || isSparkleRegion) {
-          data[idx + 3] = 0; // Set alpha transparency to 0
+        // Flood fill traversal
+        let head = 0;
+        while (head < queue.length) {
+          const [cx, cy] = queue[head++];
+          const idx = (cy * w + cx) * 4;
+          const r = data[idx];
+          const g = data[idx + 1];
+          const b = data[idx + 2];
 
-          // Check 4-connected neighbors
-          const neighbors = [
-            [cx + 1, cy],
-            [cx - 1, cy],
-            [cx, cy + 1],
-            [cx, cy - 1],
-          ];
+          // Clear background gray OR the bottom-right sparkle icon region
+          const isSparkleRegion = cx > w * 0.80 && cy > h * 0.80;
 
-          for (const [nx, ny] of neighbors) {
-            if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
-              const nidx = ny * w + nx;
-              if (visited[nidx] === 0) {
-                visited[nidx] = 1;
-                queue.push([nx, ny]);
+          if (isBgColor(r, g, b) || isSparkleRegion) {
+            data[idx + 3] = 0; // Set alpha transparency to 0
+
+            // Check 4-connected neighbors
+            const neighbors = [
+              [cx + 1, cy],
+              [cx - 1, cy],
+              [cx, cy + 1],
+              [cx, cy - 1],
+            ];
+
+            for (const [nx, ny] of neighbors) {
+              if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+                const nidx = ny * w + nx;
+                if (visited[nidx] === 0) {
+                  visited[nidx] = 1;
+                  queue.push([nx, ny]);
+                }
               }
             }
           }
@@ -122,7 +135,6 @@ export default function UserAvatar({ isMobile = false }: { isMobile?: boolean })
       className="w-full h-full flex items-center justify-center relative select-none"
       style={{
         transform: `translate(${offset.x}px, ${offset.y}px)`,
-        // CSS transition is not used during frame loops to ensure rendering is perfectly smooth
       }}
     >
       <canvas

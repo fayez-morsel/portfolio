@@ -56,15 +56,15 @@ body {
 
 /* Neon Gradient CTA Button with soft glow */
 .neon-btn-gradient {
-  background: linear-gradient(to right, #000000 8%, #db2777 28%, #8b5cf6 60%, #fb923c 100%);
-  border: 2px solid #8b5cf6;
-  box-shadow: 0 0 25px rgba(139, 92, 246, 0.45);
+  background: linear-gradient(105deg, #050508 12%, #db2777 36%, #8b5cf6 68%, #fb923c 100%);
+  border: 1.5px solid rgba(139, 92, 246, 0.7);
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.15);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
 }
 
 .neon-btn-gradient:hover {
   transform: translateY(-2px);
-  box-shadow: 0 0 35px rgba(139, 92, 246, 0.65), 0 0 15px rgba(219, 39, 119, 0.3);
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.6), 0 0 15px rgba(219, 39, 119, 0.3);
   border-color: #db2777;
 }
 
