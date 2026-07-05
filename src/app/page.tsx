@@ -133,28 +133,28 @@ export default function Home() {
   const services = [
     {
       num: "01",
-      title: "3D Modeling",
-      desc: "Creation of detailed objects, characters, or environments tailored to specific client needs, ideal for games, products, and visualizations.",
+      title: "UI/UX Design",
+      desc: "I design clean, modern, and user-friendly interfaces with wireframes, prototypes, and smooth user flows.",
     },
     {
       num: "02",
-      title: "Photorealistic Renders",
-      desc: "High-quality, photorealistic renders that showcase designs with realistic lighting, textures, and shadows.",
+      title: "Front-End Development",
+      desc: "I build responsive websites using React, TypeScript, and Tailwind CSS with clean and reusable components.",
     },
     {
       num: "03",
-      title: "3D Animation",
-      desc: "Dynamic animations to bring characters, products, or environments to life for marketing, gaming, or storytelling.",
+      title: "Full-Stack Web Development",
+      desc: "I create complete web applications from frontend to backend using React, Node.js, Express, and MongoDB.",
     },
     {
       num: "04",
-      title: "Product Design",
-      desc: "Precise 3D modeling and rendering for showcasing or prototyping consumer products.",
+      title: "REST API & Backend Development",
+      desc: "I develop organized backend systems, databases, and REST APIs that make web apps functional and scalable.",
     },
     {
       num: "05",
-      title: "Custom 3D Designs",
-      desc: "Custom 3D designs prepared and optimized for 3D printing technology.",
+      title: "Project Management",
+      desc: "I help plan, organize, and deliver digital projects by connecting design, development, and user needs.",
     },
   ];
 
@@ -219,7 +219,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="bg-[#09090B] text-white w-full overflow-x-hidden">
+    <div className="bg-bg-dark text-white w-full overflow-x-hidden">
       {/* Background Mouse Radial Glow */}
       <div className="global-glow" />
 
@@ -232,7 +232,7 @@ export default function Home() {
             <li key={section}>
               <a
                 href={`#${section}`}
-                className={`text-[10px] md:text-[11px] font-extrabold tracking-[0.22em] uppercase transition-colors duration-300 relative py-2 ${
+                className={`text-[13px] md:text-[15px] font-extrabold tracking-[0.22em] uppercase transition-colors duration-300 relative py-2 ${
                   inServices ? "text-[#09090B] hover:text-black" : "text-white hover:text-zinc-200"
                 }`}
                 style={{ fontFamily: 'var(--font-plus-jakarta)' }}
@@ -247,21 +247,39 @@ export default function Home() {
       {/* Hero Section */}
       <section
         id="home"
-        className="w-full h-screen min-h-screen relative overflow-hidden bg-[#09090B] flex flex-col justify-between pt-32 pb-16 px-8 md:block"
+        className="w-full min-h-[115vh] relative overflow-hidden bg-[#09090B] flex flex-col justify-between pt-32 pb-16 px-8 md:block"
       >
         {/* Subtle blue vertical edge lights */}
         <div className="edge-glow-left" />
         <div className="edge-glow-right" />
 
-        {/* Main Headline (Top-aligned, below nav links) */}
-        <div className="relative z-10 w-full text-center pointer-events-none md:absolute md:top-[90px] md:left-0 md:w-full">
+        {/* Main Headline (Top-aligned, below nav links, behind the avatar) */}
+        <div className="hidden md:block relative z-10 w-full text-center pointer-events-none md:absolute md:top-[90px] md:left-0 md:w-full">
           <motion.h1
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="font-bebas uppercase text-center select-none leading-[0.82] tracking-[-0.04em] headline-gradient w-full"
+            className="font-poppins font-black uppercase text-center select-none leading-[0.82] tracking-[-0.04em] headline-gradient w-full"
             style={{
-              fontSize: "clamp(3.8rem, 11vw, 13rem)",
+              fontSize: "clamp(5rem, 13.5vw, 18rem)",
+              transform: "scale(1.25, 0.65)",
+              transformOrigin: "center top",
+              display: "block",
+            }}
+          >
+            Hi, I’m Fayez
+          </motion.h1>
+        </div>
+
+        {/* Mobile Headline (Top-aligned, below nav links) */}
+        <div className="md:hidden relative z-10 w-full text-center pointer-events-none mt-4">
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="font-poppins font-black uppercase text-center select-none leading-[0.82] tracking-[-0.04em] headline-gradient w-full"
+            style={{
+              fontSize: "clamp(4.5rem, 18vw, 6.5rem)",
             }}
           >
             Hi, I’m Fayez
@@ -271,9 +289,12 @@ export default function Home() {
         {/* Mobile/Tablet Subtext - Below title, above avatar */}
         <div className="md:hidden text-center z-30 mt-4 px-4 pointer-events-none">
           <p className="text-[#a1a1aa] font-body font-semibold uppercase tracking-[0.06em] leading-[1.5] text-xs">
-            A 3D DESIGNER PASSIONATE <br />
-            ABOUT CRAFTING BOLD AND <br />
-            MEMORABLE PROJECTS 🙂
+            UI/UX DESIGNER • <br />
+            FRONT-END DEVELOPER • <br />
+            FULL-STACK CREATOR <br />
+            BUILDING MODERN AND <br />
+            MEMORABLE DIGITAL <br />
+            EXPERIENCES 😄
           </p>
         </div>
 
@@ -284,26 +305,27 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Left Subtext (Desktop) */}
-        {/* Bottom Flanking Controls (Desktop aligned with header bounds) */}
-        <div className="hidden md:flex justify-between items-end w-full max-w-[90%] md:max-w-[75%] lg:max-w-[880px] xl:max-w-[1080px] absolute md:left-1/2 md:-translate-x-1/2 md:top-[400px] lg:top-[440px] md:z-30 pointer-events-none">
+        {/* Bottom Flanking Controls (Desktop aligned to H and z edges, in front of avatar) */}
+        <div className="hidden md:flex justify-between items-end w-[82vw] absolute md:left-1/2 md:-translate-x-1/2 md:top-[250px] lg:top-[280px] xl:top-[310px] md:z-30 pointer-events-none">
           {/* Left Subtext */}
           <div 
-            className="text-[#a1a1aa] font-body font-semibold uppercase tracking-[0.06em] leading-[1.6] text-left max-w-xs lg:max-w-sm pointer-events-none"
+            className="text-[#a1a1aa] font-body font-semibold uppercase tracking-[0.06em] leading-[1.6] text-left max-w-sm lg:max-w-md pointer-events-none"
             style={{
-              fontSize: "clamp(0.85rem, 1.1vw, 1.05rem)",
+              fontSize: "clamp(1.1rem, 1.45vw, 1.4rem)",
             }}
           >
-            A 3D DESIGNER PASSIONATE <br />
-            ABOUT CRAFTING BOLD AND <br />
-            MEMORABLE PROJECTS 🙂
+            UI/UX DESIGNER • FRONT-END <br />
+            DEVELOPER • FULL-STACK CREATOR <br />
+            BUILDING MODERN AND <br />
+            MEMORABLE DIGITAL <br />
+            EXPERIENCES 😄
           </div>
 
           {/* Right CTA Button */}
           <div className="pointer-events-auto">
             <a
               href="#contact"
-              className="px-10 py-5 rounded-full text-xs font-bold uppercase tracking-[0.12em] neon-btn-gradient text-white text-center flex items-center justify-center font-body"
+              className="px-12 py-6 rounded-full text-sm md:text-base font-bold uppercase tracking-[0.14em] neon-btn-gradient text-white text-center flex items-center justify-center font-body"
             >
               CONTACT ME
             </a>
@@ -427,10 +449,10 @@ export default function Home() {
           <AboutRightCanvas />
         </div>
 
-        <div className="relative z-10 max-w-2xl mx-auto px-8 text-center flex flex-col items-center">
+        <div className="relative z-10 w-full max-w-full px-8 text-center flex flex-col items-center">
           {/* Solid white bold headline — matches screenshot */}
           <h2
-            className="font-bebas uppercase tracking-tight text-white leading-none mb-10"
+            className="font-poppins font-black uppercase tracking-tight text-white leading-none mb-10"
             style={{ fontSize: "clamp(4rem, 12vw, 9rem)" }}
           >
             ABOUT ME
@@ -441,21 +463,19 @@ export default function Home() {
             className="text-zinc-400 font-body font-light leading-relaxed mb-10"
             style={{ fontSize: "clamp(0.95rem, 1.6vw, 1.2rem)" }}
           >
-            With over five years of experience in design,
+            I’m a creative UI/UX Designer and Full-Stack Front-End Developer.
             <br className="hidden md:block" />
-            I specialize in branding, web design, and user experience.
+            I design clean interfaces, build modern websites, and create smooth user experiences.
             <br className="hidden md:block" />
-            I love collaborating with businesses that want to stand out
-            <br className="hidden md:block" />
-            and showcase their best side.
+            My goal is to make every project look professional, memorable, and easy to use.
             <br />
-            Let's create something amazing together!
+            Let’s build something amazing together!
           </p>
 
           {/* Neon gradient CONTACT ME button — matches hero button style */}
           <a
             href="#contact"
-            className="px-10 py-4 rounded-full text-xs font-bold uppercase tracking-[0.15em] neon-btn-gradient text-white inline-flex items-center justify-center font-body"
+            className="px-12 py-6 rounded-full text-sm md:text-base font-bold uppercase tracking-[0.14em] neon-btn-gradient text-white flex items-center justify-center font-body"
           >
             CONTACT ME
           </a>
@@ -471,7 +491,7 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-8">
           {/* Heading */}
           <div className="text-center mb-16">
-            <h2 className="font-bebas uppercase tracking-tight text-outline-dark leading-none"
+            <h2 className="font-poppins font-black uppercase tracking-tight text-outline-dark leading-none"
               style={{ fontSize: "clamp(4.5rem, 13vw, 10rem)" }}>
               SERVICES
             </h2>
@@ -487,7 +507,7 @@ export default function Home() {
               >
                 {/* Large display number */}
                 <span
-                  className={`font-bebas leading-none transition-colors duration-300 select-none ${
+                  className={`font-poppins font-black leading-none transition-colors duration-300 select-none ${
                     hoveredService === idx ? "text-accent-pink" : "text-[#09090B]"
                   }`}
                   style={{ fontSize: "clamp(3.5rem, 7vw, 5.5rem)" }}
@@ -498,10 +518,10 @@ export default function Home() {
                 {/* Title + Description stacked */}
                 <div className="flex flex-col justify-center pt-2">
                   <h3
-                    className={`font-heading font-extrabold uppercase tracking-tight leading-tight mb-2 transition-colors duration-300 ${
+                    className={`font-poppins font-black uppercase tracking-tight leading-none mb-2 transition-colors duration-300 ${
                       hoveredService === idx ? "text-[#09090B]" : "text-zinc-700"
                     }`}
-                    style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.1rem)" }}
+                    style={{ fontSize: "clamp(1.4rem, 2.4vw, 1.8rem)" }}
                   >
                     {service.title}
                   </h3>
@@ -551,7 +571,7 @@ export default function Home() {
         {/* Section heading */}
         <div className="max-w-6xl mx-auto px-6 md:px-8 pt-20 pb-10 text-center">
           <h2
-            className="font-bebas uppercase tracking-tight text-outline-white leading-none"
+            className="font-poppins font-black uppercase tracking-tight text-outline-white leading-none"
             style={{ fontSize: "clamp(4.5rem, 13vw, 10rem)" }}
           >
             PROJECTS
@@ -579,8 +599,8 @@ export default function Home() {
                     <div className="flex items-center justify-between px-6 h-20 border-b border-white/8">
                       <div className="flex items-center gap-5">
                         <span
-                          className="font-bebas text-white leading-none"
-                          style={{ fontSize: "clamp(2rem, 4vw, 2.8rem)" }}
+                          className="font-poppins font-black text-white leading-none"
+                          style={{ fontSize: "clamp(2rem, 4vw, 3.2rem)" }}
                         >
                           {project.num}
                         </span>
@@ -658,8 +678,8 @@ export default function Home() {
           {/* Heading */}
           <div className="text-center mb-14">
             <h2
-              className="font-heading font-extrabold leading-[1.1] text-white"
-              style={{ fontSize: "clamp(2.8rem, 7vw, 5.5rem)" }}
+              className="font-poppins font-black uppercase tracking-tight leading-none text-outline-white"
+              style={{ fontSize: "clamp(4.5rem, 10vw, 8rem)" }}
             >
               What Clients<br />Are Saying{" "}
               <span style={{ fontSize: "0.8em" }}>😍</span>
@@ -679,7 +699,7 @@ export default function Home() {
               >
                 {/* Quote */}
                 <p className="text-zinc-300 text-sm leading-relaxed">
-                  "{t.text}"
+                  &quot;{t.text}&quot;
                 </p>
 
                 {/* Author */}
@@ -722,7 +742,7 @@ export default function Home() {
               >
                 {/* Quote */}
                 <p className="text-zinc-300 text-sm leading-relaxed">
-                  "{t.text}"
+                  &quot;{t.text}&quot;
                 </p>
 
                 {/* Author */}
@@ -770,25 +790,22 @@ export default function Home() {
 
             {/* Left — Heading + email + 3D shape */}
             <div className="relative">
-              {/* 3D purple blob / shape on left */}
-              <div className="absolute -left-16 top-1/2 -translate-y-1/2 w-40 h-40 pointer-events-none hidden lg:block">
-                <AboutLeftCanvas />
-              </div>
+
 
               <div className="lg:pl-10">
                 <h2
-                  className="font-anton text-[#09090B] uppercase leading-[0.85] tracking-tight mb-8"
-                  style={{ fontSize: "clamp(4rem, 11vw, 9rem)", fontWeight: 900 }}
+                  className="font-poppins font-black text-[#09090B] uppercase leading-[0.85] tracking-tight mb-8"
+                  style={{ fontSize: "clamp(4rem, 11vw, 8rem)", fontWeight: 900 }}
                 >
                   LET&apos;S<br />
                   GET IN<br />
                   TOUCH
                 </h2>
                 <a
-                  href="mailto:alex@3dturner.cc"
+                  href="mailto:fayezmorsel77@gmail.com"
                   className="text-[#09090B] text-lg md:text-2xl font-semibold underline underline-offset-4 decoration-black/40 hover:decoration-black transition-all duration-200"
                 >
-                  alex@3dturner.cc
+                  fayezmorsel77@gmail.com
                 </a>
               </div>
             </div>

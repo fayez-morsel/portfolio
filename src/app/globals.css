@@ -4,6 +4,9 @@
   --font-heading: var(--font-syne), sans-serif;
   --font-body: var(--font-plus-jakarta), sans-serif;
   --font-bebas: var(--font-anton), sans-serif;
+  --font-montserrat: var(--font-montserrat), sans-serif;
+  --font-bebas-neue: var(--font-bebas-neue), sans-serif;
+  --font-poppins: var(--font-poppins), sans-serif;
   
   --color-accent-pink: #ff2a7a;
   --color-accent-violet: #8b5cf6;
@@ -59,13 +62,13 @@ body {
   background: linear-gradient(105deg, #050508 12%, #db2777 36%, #8b5cf6 68%, #fb923c 100%);
   border: 1.5px solid rgba(139, 92, 246, 0.7);
   box-shadow: 0 0 20px rgba(139, 92, 246, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.15);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.5s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .neon-btn-gradient:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.6), 0 0 15px rgba(219, 39, 119, 0.3);
-  border-color: #db2777;
+  transform: translateY(-2px) scale(1.05) rotate(-7deg);
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 15px rgba(255, 255, 255, 0.2);
+  border-color: #ffffff;
 }
 
 /* Text outline styles */
@@ -138,4 +141,23 @@ html.lenis, html.lenis body {
 
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
+}
+
+/* Smooth floating animations for about section png shapes */
+@keyframes float-shape-1 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(6deg); }
+}
+
+@keyframes float-shape-2 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(18px) rotate(-8deg); }
+}
+
+.animate-float-1 {
+  animation: float-shape-1 7s ease-in-out infinite;
+}
+
+.animate-float-2 {
+  animation: float-shape-2 8s ease-in-out infinite;
 }
