@@ -274,12 +274,12 @@ export default function Home() {
       <nav className={`fixed top-0 left-0 w-full z-50 pt-5 md:pt-6 pb-2 px-6 md:px-8 flex justify-center items-center transition-all duration-300 transform bg-black/60 backdrop-blur-md md:bg-transparent md:backdrop-blur-none ${
         showHeader ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
       }`}>
-        <ul className="flex justify-between w-full max-w-[95%] md:max-w-[75%] lg:max-w-[880px] xl:max-w-[1080px]">
+        <ul className="flex justify-between w-full max-w-[95%] md:max-w-[75%] lg:max-w-220 xl:max-w-270">
           {["about", "customers", "projects", "contact"].map((section) => (
             <li key={section}>
               <a
                 href={`#${section}`}
-                className={`text-[11px] md:text-[15px] font-extrabold tracking-[0.1em] md:tracking-[0.22em] uppercase transition-colors duration-300 relative py-2 ${
+                className={`text-[11px] md:text-[15px] font-extrabold tracking-widest md:tracking-[0.22em] uppercase transition-colors duration-300 relative py-2 ${
                   inServices ? "text-[#09090B] hover:text-black" : "text-white hover:text-zinc-200"
                 }`}
                 style={{ fontFamily: 'var(--font-plus-jakarta)' }}
