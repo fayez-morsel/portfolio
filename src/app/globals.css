@@ -217,3 +217,28 @@ html.lenis, html.lenis body { height: auto; }
 .gallery-img:hover {
   transform: scale(1.03);
 }
+
+/* ─── Responsive Burger Menu (< 500px) ─────────────────────────────── */
+@media (max-width: 499px) {
+  .nav-desktop {
+    display: none !important;
+  }
+  .nav-mobile-btn {
+    display: flex !important;
+  }
+  .nav-mobile-overlay {
+    display: flex !important;
+  }
+}
+@media (min-width: 500px) {
+  .nav-desktop {
+    display: flex !important;
+  }
+  .nav-mobile-btn {
+    display: none !important;
+  }
+  .nav-mobile-overlay {
+    display: none !important;
+  }
+}
+

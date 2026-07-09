@@ -65,6 +65,7 @@ export default function Home() {
   const [inServices, setInServices] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
   const lastScrollYRef = useRef(0);
   const shouldReduceMotion = useReducedMotion();
 
@@ -274,7 +275,8 @@ export default function Home() {
       <nav className={`fixed top-0 left-0 w-full z-50 pt-5 md:pt-6 pb-2 px-6 md:px-8 flex justify-center items-center transition-all duration-300 transform bg-black/60 backdrop-blur-md md:bg-transparent md:backdrop-blur-none ${
         showHeader ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
       }`}>
-        <ul className="flex justify-between w-full max-w-[95%] md:max-w-[75%] lg:max-w-220 xl:max-w-270">
+        {/* Desktop / Tablet menu (min-width: 500px) */}
+        <ul className="nav-desktop justify-between w-full max-w-[95%] md:max-w-[75%] lg:max-w-220 xl:max-w-270">
           {["about", "customers", "projects", "contact"].map((section) => (
             <li key={section}>
               <a
@@ -289,7 +291,65 @@ export default function Home() {
             </li>
           ))}
         </ul>
+
+        {/* Mobile Burger Menu Button (max-width: 500px) */}
+        <div className="nav-mobile-btn w-full justify-end px-4">
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="relative z-50 w-10 h-10 flex flex-col justify-center items-center gap-1.5 focus:outline-none p-2 rounded-full border border-white/10 bg-black/40 backdrop-blur-md"
+            aria-label="Toggle menu"
+          >
+            <motion.span
+              animate={menuOpen ? { rotate: 45, y: 5 } : { rotate: 0, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className={`w-5 h-0.5 block transition-colors ${inServices && !menuOpen ? "bg-[#09090B]" : "bg-white"}`}
+            />
+            <motion.span
+              animate={menuOpen ? { opacity: 0 } : { opacity: 1 }}
+              transition={{ duration: 0.2 }}
+              className={`w-5 h-0.5 block transition-colors ${inServices && !menuOpen ? "bg-[#09090B]" : "bg-white"}`}
+            />
+            <motion.span
+              animate={menuOpen ? { rotate: -45, y: -5 } : { rotate: 0, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className={`w-5 h-0.5 block transition-colors ${inServices && !menuOpen ? "bg-[#09090B]" : "bg-white"}`}
+            />
+          </button>
+        </div>
       </nav>
+
+      {/* Mobile menu overlay (max-width: 500px) */}
+      <motion.div
+        initial={false}
+        animate={menuOpen ? "open" : "closed"}
+        variants={{
+          open: { opacity: 1, y: 0, pointerEvents: "auto" },
+          closed: { opacity: 0, y: -20, pointerEvents: "none" }
+        }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        className="nav-mobile-overlay fixed top-0 left-0 w-full h-screen bg-black/95 backdrop-blur-lg z-40 flex flex-col justify-center items-center"
+      >
+        <ul className="flex flex-col items-center gap-8 text-center">
+          {["about", "customers", "projects", "contact"].map((section, idx) => (
+            <motion.li
+              key={section}
+              variants={{
+                open: { opacity: 1, y: 0, transition: { delay: idx * 0.08 + 0.1, duration: 0.4 } },
+                closed: { opacity: 0, y: 15 }
+              }}
+            >
+              <a
+                href={`#${section}`}
+                onClick={() => setMenuOpen(false)}
+                className="text-2xl font-black tracking-widest uppercase text-white hover:text-accent-pink transition-colors duration-300 block py-2"
+                style={{ fontFamily: 'var(--font-plus-jakarta)' }}
+              >
+                {section}
+              </a>
+            </motion.li>
+          ))}
+        </ul>
+      </motion.div>
 
       {/* ── Hero Section ──────────────────────────────────────────────── */}
       <section
@@ -438,24 +498,7 @@ export default function Home() {
           </a>
         </motion.div>
 
-        {/* Scroll Down Indicator — desktop only */}
-        <motion.div
-          className="hidden md:flex absolute bottom-10 left-1/2 -translate-x-1/2 flex-col items-center z-30 pointer-events-none opacity-80"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.8 }}
-          transition={{ duration: 1, delay: 1.1 }}
-        >
-          <span className="text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase mb-3 text-white">
-            SCROLL DOWN
-          </span>
-          <div className="w-6.5 h-10 rounded-full border-2 border-white/40 flex justify-center p-1">
-            <motion.div
-              animate={{ y: [0, 12, 0], opacity: [1, 0.5, 1] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              className="w-1.5 h-1.5 rounded-full bg-accent-violet shadow-[0_0_8px_rgba(124,58,237,0.8)]"
-            />
-          </div>
-        </motion.div>
+
       </section>
 
       {/* ── Logo Ribbon ───────────────────────────────────────────────── */}
