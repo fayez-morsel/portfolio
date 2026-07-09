@@ -27,7 +27,7 @@ function TorusKnot() {
 export default function TorusCanvas() {
   return (
     <div className="w-full h-full">
-      <Canvas camera={{ position: [0, 0, 3], fov: 45 }}>
+      <Canvas camera={{ position: [0, 0, 3], fov: 45 }} gl={{ alpha: true }} style={{ background: "transparent" }}>
         <ambientLight intensity={1.2} />
         <directionalLight position={[2, 3, 2]} intensity={1.8} />
         <pointLight position={[-2, -3, 2]} intensity={1.2} color="#a78bfa" />

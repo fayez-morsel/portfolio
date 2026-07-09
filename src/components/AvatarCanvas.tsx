@@ -4,11 +4,7 @@ import React, { useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
-interface StylizedHeadProps {
-  isMobile: boolean;
-}
-
-function StylizedHead({ isMobile }: StylizedHeadProps) {
+function StylizedHead() {
   const headGroupRef = useRef<THREE.Group>(null);
   const leftEyeRef = useRef<THREE.Mesh>(null);
   const rightEyeRef = useRef<THREE.Mesh>(null);
@@ -16,72 +12,29 @@ function StylizedHead({ isMobile }: StylizedHeadProps) {
   useFrame((state) => {
     const time = state.clock.getElapsedTime();
 
-    if (isMobile) {
-      // Auto float panning horizontal loop on mobile
-      const autoX = Math.sin(time * 0.8) * 0.3;
-      const autoY = Math.cos(time * 0.6) * 0.12;
+    // Autonomous floating animation — no mouse tracking on any device
+    const autoX = Math.sin(time * 0.8) * 0.3;
+    const autoY = Math.cos(time * 0.6) * 0.12;
 
-      if (headGroupRef.current) {
-        headGroupRef.current.rotation.y = THREE.MathUtils.lerp(
-          headGroupRef.current.rotation.y,
-          autoX,
-          0.05
-        );
-        headGroupRef.current.rotation.x = THREE.MathUtils.lerp(
-          headGroupRef.current.rotation.x,
-          autoY,
-          0.05
-        );
-        headGroupRef.current.position.y = Math.sin(time * 1.5) * 0.05;
-      }
+    if (headGroupRef.current) {
+      headGroupRef.current.rotation.y = THREE.MathUtils.lerp(
+        headGroupRef.current.rotation.y,
+        autoX,
+        0.05
+      );
+      headGroupRef.current.rotation.x = THREE.MathUtils.lerp(
+        headGroupRef.current.rotation.x,
+        autoY,
+        0.05
+      );
+      headGroupRef.current.position.y = Math.sin(time * 1.5) * 0.05;
+    }
 
-      if (leftEyeRef.current && rightEyeRef.current) {
-        leftEyeRef.current.rotation.y = autoX * 1.1;
-        leftEyeRef.current.rotation.x = autoY * 1.1;
-        rightEyeRef.current.rotation.y = autoX * 1.1;
-        rightEyeRef.current.rotation.x = autoY * 1.1;
-      }
-    } else {
-      // Desktop mouse tracking with exact lerp = 0.08
-      const { x, y } = state.pointer; // Normalized cursor coordinates [-1, 1]
-
-      if (headGroupRef.current) {
-        headGroupRef.current.rotation.y = THREE.MathUtils.lerp(
-          headGroupRef.current.rotation.y,
-          x * 0.45,
-          0.08
-        );
-        headGroupRef.current.rotation.x = THREE.MathUtils.lerp(
-          headGroupRef.current.rotation.x,
-          -y * 0.35,
-          0.08
-        );
-        headGroupRef.current.position.y = Math.sin(time * 1.5) * 0.05;
-      }
-
-      if (leftEyeRef.current && rightEyeRef.current) {
-        leftEyeRef.current.rotation.y = THREE.MathUtils.lerp(
-          leftEyeRef.current.rotation.y,
-          x * 0.5,
-          0.12
-        );
-        leftEyeRef.current.rotation.x = THREE.MathUtils.lerp(
-          leftEyeRef.current.rotation.x,
-          -y * 0.4,
-          0.12
-        );
-
-        rightEyeRef.current.rotation.y = THREE.MathUtils.lerp(
-          rightEyeRef.current.rotation.y,
-          x * 0.5,
-          0.12
-        );
-        rightEyeRef.current.rotation.x = THREE.MathUtils.lerp(
-          rightEyeRef.current.rotation.x,
-          -y * 0.4,
-          0.12
-        );
-      }
+    if (leftEyeRef.current && rightEyeRef.current) {
+      leftEyeRef.current.rotation.y = autoX * 1.1;
+      leftEyeRef.current.rotation.x = autoY * 1.1;
+      rightEyeRef.current.rotation.y = autoX * 1.1;
+      rightEyeRef.current.rotation.x = autoY * 1.1;
     }
   });
 
@@ -218,13 +171,9 @@ function StylizedHead({ isMobile }: StylizedHeadProps) {
   );
 }
 
-interface AvatarCanvasProps {
-  isMobile?: boolean;
-}
-
-export default function AvatarCanvas({ isMobile = false }: AvatarCanvasProps) {
+export default function AvatarCanvas() {
   return (
-    <div className="w-full h-full relative cursor-grab active:cursor-grabbing">
+    <div className="w-full h-full relative">
       <Canvas
         camera={{ position: [0, 0, 4.2], fov: 45 }}
         style={{ pointerEvents: "auto" }}
@@ -250,7 +199,7 @@ export default function AvatarCanvas({ isMobile = false }: AvatarCanvasProps) {
         />
         <ambientLight intensity={0.2} />
         
-        <StylizedHead isMobile={isMobile} />
+        <StylizedHead />
       </Canvas>
     </div>
   );
