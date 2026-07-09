@@ -271,15 +271,15 @@ export default function Home() {
       <div className="global-glow" />
 
       {/* Global Navigation Bar */}
-      <nav className={`fixed top-0 left-0 w-full z-50 pt-5 md:pt-6 pb-2 px-8 flex justify-center items-center transition-all duration-300 transform ${
+      <nav className={`fixed top-0 left-0 w-full z-50 pt-5 md:pt-6 pb-2 px-6 md:px-8 flex justify-center items-center transition-all duration-300 transform bg-black/60 backdrop-blur-md md:bg-transparent md:backdrop-blur-none ${
         showHeader ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
       }`}>
-        <ul className="flex justify-between w-full max-w-[90%] md:max-w-[75%] lg:max-w-220 xl:max-w-270">
+        <ul className="flex justify-between w-full max-w-[95%] md:max-w-[75%] lg:max-w-[880px] xl:max-w-[1080px]">
           {["about", "customers", "projects", "contact"].map((section) => (
             <li key={section}>
               <a
                 href={`#${section}`}
-                className={`text-[13px] md:text-[15px] font-extrabold tracking-[0.22em] uppercase transition-colors duration-300 relative py-2 ${
+                className={`text-[11px] md:text-[15px] font-extrabold tracking-[0.1em] md:tracking-[0.22em] uppercase transition-colors duration-300 relative py-2 ${
                   inServices ? "text-[#09090B] hover:text-black" : "text-white hover:text-zinc-200"
                 }`}
                 style={{ fontFamily: 'var(--font-plus-jakarta)' }}
@@ -438,9 +438,9 @@ export default function Home() {
           </a>
         </motion.div>
 
-        {/* Scroll Down Indicator */}
+        {/* Scroll Down Indicator — desktop only */}
         <motion.div
-          className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center z-30 pointer-events-none opacity-80"
+          className="hidden md:flex absolute bottom-10 left-1/2 -translate-x-1/2 flex-col items-center z-30 pointer-events-none opacity-80"
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.8 }}
           transition={{ duration: 1, delay: 1.1 }}
