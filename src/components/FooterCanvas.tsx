@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -11,11 +11,13 @@ function PrimitiveCollage() {
     const time = state.clock.getElapsedTime();
     if (groupRef.current) {
       groupRef.current.rotation.y = time * 0.15;
-      // Individual floating animations
+      // Individual floating animations (avoiding infinite accumulative drift)
       groupRef.current.children.forEach((child, i) => {
-        child.position.y = child.position.y + Math.sin(time * 1.5 + i) * 0.001;
-        child.rotation.x = child.rotation.x + 0.005;
-        child.rotation.y = child.rotation.y + 0.003;
+        // Safe, non-accumulating float animation
+        const initialY = i * 0.2 - 0.4; // rough original coordinate reference
+        child.position.y = initialY + Math.sin(time * 1.5 + i) * 0.05;
+        child.rotation.x = time * 0.5 + i;
+        child.rotation.y = time * 0.3 + i;
       });
     }
   });
@@ -56,15 +58,35 @@ function PrimitiveCollage() {
 }
 
 export default function FooterCanvas() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { threshold: 0.01 }
+    );
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   return (
-    <div className="w-full h-full">
-      <Canvas camera={{ position: [0, 0, 3], fov: 40 }}>
-        <ambientLight intensity={1.5} />
-        <directionalLight position={[1, 3, 2]} intensity={1.5} />
-        <pointLight position={[-1, -2, 1]} intensity={1.0} color="#f43f5e" />
-        <pointLight position={[1, -2, 1]} intensity={1.0} color="#22d3ee" />
-        <PrimitiveCollage />
-      </Canvas>
+    <div ref={containerRef} className="w-full h-full">
+      {isVisible && (
+        <Canvas camera={{ position: [0, 0, 3], fov: 40 }}>
+          <ambientLight intensity={1.5} />
+          <directionalLight position={[1, 3, 2]} intensity={1.5} />
+          <pointLight position={[-1, -2, 1]} intensity={1.0} color="#f43f5e" />
+          <pointLight position={[1, -2, 1]} intensity={1.0} color="#22d3ee" />
+          <PrimitiveCollage />
+        </Canvas>
+      )}
     </div>
   );
 }
