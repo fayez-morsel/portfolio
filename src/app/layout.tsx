@@ -39,8 +39,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Alex Turner | Premium 3D Designer Portfolio",
-  description: "Alex Turner - Premium 3D Designer Portfolio. Recreated 1:1 with hardware-accelerated 3D meshes, mouse-tracking, and fluid interactions.",
+  title: "Fayez | UI/UX Designer & Full-Stack Developer",
+  description: "Fayez — Creative UI/UX Designer and Full-Stack Front-End Developer. Building modern, memorable, and professional digital experiences.",
 };
 
 export default function RootLayout({
