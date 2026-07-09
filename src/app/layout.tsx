@@ -54,7 +54,7 @@ export default function RootLayout({
       className={`${syne.variable} ${plusJakarta.variable} ${anton.variable} ${montserrat.variable} ${bebasNeue.variable} ${poppins.variable} scroll-smooth`}
       suppressHydrationWarning
     >
-      <body className="bg-[#09090B] text-white antialiased overflow-x-hidden">
+      <body className="bg-[#09090B] text-white antialiased">
         {children}
       </body>
     </html>

@@ -8,7 +8,7 @@ import Lenis from "lenis";
 // Canvas Components (Client side only, imported dynamically to prevent hydration mismatches)
 import dynamic from "next/dynamic";
 
-const UserAvatar = dynamic(() => import("@/components/UserAvatar"), { ssr: false });
+import UserAvatar from "@/components/UserAvatar";
 const AboutLeftCanvas = dynamic(() => import("@/components/AboutLeftCanvas"), { ssr: false });
 const AboutRightCanvas = dynamic(() => import("@/components/AboutRightCanvas"), { ssr: false });
 const FooterCanvas = dynamic(() => import("@/components/FooterCanvas"), { ssr: false });
@@ -36,8 +36,8 @@ const scaleIn: Variants = {
 };
 
 const blurUp: Variants = {
-  hidden: { opacity: 0, y: 32, filter: "blur(12px)" },
-  show:   { opacity: 1, y: 0,  filter: "blur(0px)", transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] } },
+  hidden: { opacity: 0, y: 32 },
+  show:   { opacity: 1, y: 0,  transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
 };
 
 const headingReveal: Variants = {
@@ -373,8 +373,8 @@ export default function Home() {
         {/* Main Headline (Desktop) */}
         <div className="hidden md:block relative z-10 w-full text-center pointer-events-none md:absolute md:top-22.5 md:left-0 md:w-full">
           <motion.h1
-            initial={{ opacity: 0, y: 60, filter: "blur(16px)" }}
-            animate={{ opacity: 1, y: 0,  filter: "blur(0px)" }}
+            initial={{ opacity: 0, y: 60 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             className="font-poppins font-black uppercase text-center select-none leading-[0.82] tracking-[-0.04em] headline-gradient w-full"
             style={{
@@ -391,8 +391,8 @@ export default function Home() {
         {/* Mobile Headline */}
         <div className="md:hidden relative z-10 w-full text-center pointer-events-none mt-4">
           <motion.h1
-            initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0,  filter: "blur(0px)" }}
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             className="font-poppins font-black uppercase text-center select-none leading-[0.82] tracking-[-0.04em] headline-gradient w-full"
             style={{ fontSize: "clamp(4.5rem, 18vw, 6.5rem)" }}
