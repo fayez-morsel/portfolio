@@ -274,7 +274,7 @@ export default function Home() {
       <nav className={`fixed top-0 left-0 w-full z-50 pt-5 md:pt-6 pb-2 px-8 flex justify-center items-center transition-all duration-300 transform ${
         showHeader ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
       }`}>
-        <ul className="flex justify-between w-full max-w-[90%] md:max-w-[75%] lg:max-w-[880px] xl:max-w-[1080px]">
+        <ul className="flex justify-between w-full max-w-[90%] md:max-w-[75%] lg:max-w-220 xl:max-w-270">
           {["about", "customers", "projects", "contact"].map((section) => (
             <li key={section}>
               <a
@@ -294,7 +294,7 @@ export default function Home() {
       {/* ── Hero Section ──────────────────────────────────────────────── */}
       <section
         id="home"
-        className="w-full min-h-[135vh] relative overflow-hidden bg-[#000000] flex flex-col justify-between pt-32 pb-16 px-8 md:block"
+        className="w-full min-h-[135vh] relative overflow-hidden bg-bg-dark flex flex-col justify-between pt-32 pb-16 px-8 md:block"
       >
         {/* Subtle blue vertical edge lights */}
         <motion.div
@@ -311,7 +311,7 @@ export default function Home() {
         />
 
         {/* Main Headline (Desktop) */}
-        <div className="hidden md:block relative z-10 w-full text-center pointer-events-none md:absolute md:top-[90px] md:left-0 md:w-full">
+        <div className="hidden md:block relative z-10 w-full text-center pointer-events-none md:absolute md:top-22.5 md:left-0 md:w-full">
           <motion.h1
             initial={{ opacity: 0, y: 60, filter: "blur(16px)" }}
             animate={{ opacity: 1, y: 0,  filter: "blur(0px)" }}
@@ -348,7 +348,7 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.35 }}
         >
-          <p className="text-[#a1a1aa] font-body font-semibold uppercase tracking-[0.06em] leading-[1.5] text-xs">
+          <p className="text-[#a1a1aa] font-body font-semibold uppercase tracking-[0.06em] leading-normal text-xs">
             UI/UX DESIGNER • <br />
             FRONT-END DEVELOPER • <br />
             FULL-STACK CREATOR <br />
@@ -360,7 +360,7 @@ export default function Home() {
 
         {/* Avatar Container */}
         <motion.div
-          className="relative w-full h-[360px] flex items-center justify-center z-20 pointer-events-none md:absolute md:top-[170px] md:left-1/2 md:-translate-x-1/2 md:max-w-[550px] md:h-[550px]"
+          className="relative w-full h-90 flex items-center justify-center z-20 pointer-events-none md:absolute md:top-42.5 md:left-1/2 md:-translate-x-1/2 md:max-w-137.5 md:h-137.5"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
@@ -371,7 +371,7 @@ export default function Home() {
         </motion.div>
 
         {/* Desktop flanking controls */}
-        <div className="hidden md:flex justify-between items-end w-[82vw] absolute md:left-1/2 md:-translate-x-1/2 md:top-[250px] lg:top-[280px] xl:top-[310px] md:z-30 pointer-events-none">
+        <div className="hidden md:flex justify-between items-end w-[82vw] absolute md:left-1/2 md:-translate-x-1/2 md:top-62.5 lg:top-70 xl:top-77.5 md:z-30 pointer-events-none">
           {/* Left subtext */}
           <motion.div
             className="text-[#a1a1aa] font-body font-semibold uppercase tracking-[0.06em] leading-[1.6] text-left max-w-sm lg:max-w-md pointer-events-none"
@@ -387,9 +387,9 @@ export default function Home() {
             EXPERIENCES 😄
           </motion.div>
 
-          {/* Right CTA */}
+          {/* Right CTAs — stacked column */}
           <motion.div
-            className="pointer-events-auto"
+            className="pointer-events-auto flex flex-col gap-3"
             initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.6 }}
@@ -400,12 +400,22 @@ export default function Home() {
             >
               CONTACT ME
             </a>
+            <a
+              href="/Fayez-CV.pdf"
+              download
+              className="px-12 py-6 rounded-full text-sm md:text-base font-bold uppercase tracking-[0.14em] neon-btn-gradient text-white text-center flex items-center justify-center gap-2 font-body"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+              </svg>
+              DOWNLOAD CV
+            </a>
           </motion.div>
         </div>
 
-        {/* Mobile bottom CTA */}
+        {/* Mobile bottom CTAs */}
         <motion.div
-          className="md:hidden w-full flex justify-center items-center z-30 px-8 pb-4"
+          className="md:hidden w-full flex flex-col gap-3 z-30 px-8 pb-4"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.55 }}
@@ -415,6 +425,16 @@ export default function Home() {
             className="px-10 py-5 rounded-full text-xs font-bold uppercase tracking-[0.12em] neon-btn-gradient text-white text-center w-full font-body"
           >
             CONTACT ME
+          </a>
+          <a
+            href="/Fayez-CV.pdf"
+            download
+            className="px-10 py-5 rounded-full text-xs font-bold uppercase tracking-[0.12em] neon-btn-gradient text-white text-center w-full font-body flex items-center justify-center gap-2"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+            DOWNLOAD CV
           </a>
         </motion.div>
 
@@ -428,7 +448,7 @@ export default function Home() {
           <span className="text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase mb-3 text-white">
             SCROLL DOWN
           </span>
-          <div className="w-[26px] h-[40px] rounded-full border-2 border-white/40 flex justify-center p-1">
+          <div className="w-6.5 h-10 rounded-full border-2 border-white/40 flex justify-center p-1">
             <motion.div
               animate={{ y: [0, 12, 0], opacity: [1, 0.5, 1] }}
               transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
@@ -440,7 +460,7 @@ export default function Home() {
 
       {/* ── Logo Ribbon ───────────────────────────────────────────────── */}
       <motion.section
-        className="border-y border-white/6 py-6 overflow-hidden bg-[#000000] w-full"
+        className="border-y border-white/6 py-6 overflow-hidden bg-bg-dark w-full"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={viewportOnce}
@@ -479,7 +499,7 @@ export default function Home() {
       </motion.section>
 
       {/* ── Bento Gallery ─────────────────────────────────────────────── */}
-      <section className="bg-[#000000] py-4 px-3 md:px-4 w-full">
+      <section className="bg-bg-dark py-4 px-3 md:px-4 w-full">
         <motion.div
           className="w-full"
           variants={v(staggerContainer(0.08, 0.1))}
@@ -497,7 +517,7 @@ export default function Home() {
               <motion.div
                 key={i}
                 variants={v(scaleIn)}
-                className="relative rounded-2xl overflow-hidden aspect-[4/3] gallery-img"
+                className="relative rounded-2xl overflow-hidden aspect-4/3 gallery-img"
               >
                 <Image src={img.src} alt={img.alt} fill className="object-cover" />
               </motion.div>
@@ -505,13 +525,13 @@ export default function Home() {
           </div>
           {/* Bottom row */}
           <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr] gap-3">
-            <motion.div variants={v(slideLeft)} className="relative rounded-2xl overflow-hidden aspect-[16/7] gallery-img">
+            <motion.div variants={v(slideLeft)} className="relative rounded-2xl overflow-hidden aspect-16/7 gallery-img">
               <Image src="/assets/gallery4.png" alt="Macro abstract 4" fill className="object-cover" />
             </motion.div>
-            <motion.div variants={v(scaleIn)} className="relative rounded-2xl overflow-hidden aspect-[4/3] gallery-img">
+            <motion.div variants={v(scaleIn)} className="relative rounded-2xl overflow-hidden aspect-4/3 gallery-img">
               <Image src="/assets/gallery5.png" alt="Macro abstract 5" fill className="object-cover" />
             </motion.div>
-            <motion.div variants={v(slideRight)} className="relative rounded-2xl overflow-hidden aspect-[4/3] gallery-img">
+            <motion.div variants={v(slideRight)} className="relative rounded-2xl overflow-hidden aspect-4/3 gallery-img">
               <Image src="/assets/gallery6.png" alt="Macro abstract 6" fill className="object-cover" />
             </motion.div>
           </div>
@@ -519,7 +539,7 @@ export default function Home() {
       </section>
 
       {/* ── About Me Section ──────────────────────────────────────────── */}
-      <section id="about" className="relative bg-[#000000] overflow-hidden py-28 w-full">
+      <section id="about" className="relative bg-bg-dark overflow-hidden py-28 w-full">
         {/* 3D canvases */}
         <div className="absolute left-0 top-0 w-52 h-full z-0 pointer-events-none hidden md:block">
           <AboutLeftCanvas />
@@ -577,7 +597,7 @@ export default function Home() {
       <section
         id="services"
         ref={servicesRef}
-        className="py-28 border-b border-white/6 relative z-10 bg-[#000000] text-white"
+        className="py-28 border-b border-white/6 relative z-10 bg-bg-dark text-white"
       >
         <div className="max-w-5xl mx-auto px-8">
           {/* Heading */}
@@ -654,7 +674,7 @@ export default function Home() {
       </section>
 
       {/* ── Projects Section ──────────────────────────────────────────── */}
-      <section id="projects" className="bg-[#000000] py-28 relative">
+      <section id="projects" className="bg-bg-dark py-28 relative">
         <div className="max-w-7xl mx-auto px-6 md:px-8">
           {/* Heading */}
           <div className="mb-16 overflow-hidden">
@@ -714,8 +734,8 @@ export default function Home() {
                   </div>
 
                   {/* Middle Zone: Expanding Thumbnails */}
-                  <div className="flex-1 w-full flex justify-center lg:justify-start items-center mb-6 lg:mb-0 relative min-h-[140px] md:min-h-[180px]">
-                    <div className="relative w-full max-w-[600px] h-[140px] md:h-[180px] flex items-center justify-center">
+                  <div className="flex-1 w-full flex justify-center lg:justify-start items-center mb-6 lg:mb-0 relative min-h-35 md:min-h-45">
+                    <div className="relative w-full max-w-150 h-35 md:h-45 flex items-center justify-center">
                       
                       {/* Image 1 (Left) */}
                       <div
@@ -821,7 +841,7 @@ export default function Home() {
       </section>
 
       {/* ── Testimonials Section ──────────────────────────────────────── */}
-      <section id="testimonials" className="py-24 bg-[#000000] border-b border-white/6 relative">
+      <section id="testimonials" className="py-24 bg-bg-dark border-b border-white/6 relative">
         <div className="max-w-6xl mx-auto px-6 md:px-8">
           {/* Heading */}
           <div className="text-center mb-14 overflow-hidden">
@@ -860,14 +880,14 @@ export default function Home() {
                   borderColor: "rgba(255,255,255,0.18)",
                   transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
                 }}
-                className="bento-card p-6 flex flex-col justify-between min-h-[200px]"
+                className="bento-card p-6 flex flex-col justify-between min-h-50"
               >
                 <p className="text-sm leading-relaxed" style={{ color: "#A0A0A0" }}>
                   &quot;{t.text}&quot;
                 </p>
                 <div className="flex items-center gap-3 mt-6">
                   <div
-                    className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-xs border border-white/10"
+                    className="w-10 h-10 rounded-full shrink-0 flex items-center justify-center text-white font-bold text-xs border border-white/10"
                     style={{
                       background: [
                         "linear-gradient(135deg, #7c3aed, #ec4899)",
@@ -905,14 +925,14 @@ export default function Home() {
                   borderColor: "rgba(255,255,255,0.18)",
                   transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
                 }}
-                className="bento-card p-6 flex flex-col justify-between min-h-[200px]"
+                className="bento-card p-6 flex flex-col justify-between min-h-50"
               >
                 <p className="text-sm leading-relaxed" style={{ color: "#A0A0A0" }}>
                   &quot;{t.text}&quot;
                 </p>
                 <div className="flex items-center gap-3 mt-6">
                   <div
-                    className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-xs border border-white/10"
+                    className="w-10 h-10 rounded-full shrink-0 flex items-center justify-center text-white font-bold text-xs border border-white/10"
                     style={{
                       background: [
                         "linear-gradient(135deg, #d97706, #ec4899)",
@@ -937,9 +957,9 @@ export default function Home() {
       {/* ── Contact Section ───────────────────────────────────────────── */}
       <section
         id="contact"
-        className="relative overflow-hidden bg-[#000000] text-white"
+        className="relative overflow-hidden bg-bg-dark text-white"
       >
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-white/10 to-transparent" />
 
         <div className="max-w-6xl mx-auto px-6 md:px-8 py-28">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
@@ -1037,7 +1057,7 @@ export default function Home() {
 
       {/* ── Footer ────────────────────────────────────────────────────── */}
       <motion.footer
-        className="border-t border-white/6 py-16 relative bg-[#000000] z-10"
+        className="border-t border-white/6 py-16 relative bg-bg-dark z-10"
         variants={v(fadeUp)}
         initial="hidden"
         whileInView="show"
