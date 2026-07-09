@@ -22,6 +22,14 @@
 }
 
 /* ─── Base ─────────────────────────────────────────────────────────── */
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar {
+  display: none;
+}
+
 html,
 body {
   background-color: #000000;
