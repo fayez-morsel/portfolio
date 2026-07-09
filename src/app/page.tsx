@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion, Variants } from "framer-motion";
 import Lenis from "lenis";
 
 // Canvas Components (Client side only, imported dynamically to prevent hydration mismatches)
@@ -13,16 +13,64 @@ const AboutLeftCanvas = dynamic(() => import("@/components/AboutLeftCanvas"), { 
 const AboutRightCanvas = dynamic(() => import("@/components/AboutRightCanvas"), { ssr: false });
 const FooterCanvas = dynamic(() => import("@/components/FooterCanvas"), { ssr: false });
 
+// ─── Shared animation variants ───────────────────────────────────────────────
+
+const fadeUp: Variants = {
+  hidden: { opacity: 0, y: 48 },
+  show:   { opacity: 1, y: 0,  transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
+};
+
+const slideLeft: Variants = {
+  hidden: { opacity: 0, x: -60 },
+  show:   { opacity: 1, x: 0,  transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] } },
+};
+
+const slideRight: Variants = {
+  hidden: { opacity: 0, x: 60 },
+  show:   { opacity: 1, x: 0,  transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] } },
+};
+
+const scaleIn: Variants = {
+  hidden: { opacity: 0, scale: 0.88 },
+  show:   { opacity: 1, scale: 1,   transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] } },
+};
+
+const blurUp: Variants = {
+  hidden: { opacity: 0, y: 32, filter: "blur(12px)" },
+  show:   { opacity: 1, y: 0,  filter: "blur(0px)", transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] } },
+};
+
+const headingReveal: Variants = {
+  hidden: { opacity: 0, y: 60, skewY: 4 },
+  show:   { opacity: 1, y: 0,  skewY: 0, transition: { duration: 0.9, ease: [0.16, 1, 0.3, 1] } },
+};
+
+// Container that staggers its children
+const staggerContainer = (stagger = 0.1, delayChildren = 0): Variants => ({
+  hidden: {},
+  show: {
+    transition: { staggerChildren: stagger, delayChildren },
+  },
+});
+
+const viewportOnce = { once: true, margin: "-8%" };
+
+// ─── Component ───────────────────────────────────────────────────────────────
+
 export default function Home() {
   const [hoveredService, setHoveredService] = useState<number | null>(null);
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
   const [currentProjectPage, setCurrentProjectPage] = useState(1);
-  const [avatarTilt, setAvatarTilt] = useState({ x: 0, y: 0 });
   const servicesRef = useRef<HTMLDivElement>(null);
   const [inServices, setInServices] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showHeader, setShowHeader] = useState(true);
   const lastScrollYRef = useRef(0);
+  const shouldReduceMotion = useReducedMotion();
+
+  // Helper: skip animations for users who prefer-reduced-motion
+  const v = (variant: Variants): Variants =>
+    shouldReduceMotion ? { hidden: {}, show: {} } : variant;
 
   useEffect(() => {
     const checkResize = () => {
@@ -39,7 +87,6 @@ export default function Home() {
       const currentScrollY = window.scrollY;
       const lastScrollY = lastScrollYRef.current;
       
-      // Hide header when scrolling down past 50px, show when scrolling up
       if (currentScrollY > lastScrollY && currentScrollY > 50) {
         setShowHeader(false);
       } else {
@@ -72,15 +119,11 @@ export default function Home() {
     };
   }, []);
 
-  // Track global mouse for radial background glow AND avatar parallax
+  // Track global mouse for radial background glow only
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       document.documentElement.style.setProperty("--mouse-x", `${e.clientX}px`);
       document.documentElement.style.setProperty("--mouse-y", `${e.clientY}px`);
-      // Avatar parallax: map to ±12deg
-      const cx = (e.clientX / window.innerWidth - 0.5) * 2;
-      const cy = (e.clientY / window.innerHeight - 0.5) * 2;
-      setAvatarTilt({ x: cy * -12, y: cx * 12 });
     };
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
@@ -105,23 +148,6 @@ export default function Home() {
         observer.unobserve(servicesEl);
       }
     };
-  }, []);
-
-  // Global scroll fade-up IntersectionObserver
-  useEffect(() => {
-    const elements = document.querySelectorAll(".fade-up");
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
-    );
-    elements.forEach((el) => observer.observe(el));
-    return () => elements.forEach((el) => observer.unobserve(el));
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -196,48 +222,48 @@ export default function Home() {
     },
   ];
 
+  const testimonials = [
+    {
+      initials: "RL",
+      name: "Rania Larsson",
+      company: "Lumis Studio",
+      text: "Fayez redesigned our entire SaaS dashboard from scratch. The UI is clean, intuitive, and our users noticed the difference immediately. He truly understands how design and usability go hand in hand.",
+    },
+    {
+      initials: "KM",
+      name: "Karim Mansour",
+      company: "Nexova Tech",
+      text: "We hired Fayez to build our company's front-end from Figma designs. He delivered pixel-perfect results, the animations felt premium, and he was incredibly easy to work with throughout.",
+    },
+    {
+      initials: "YB",
+      name: "Yasmine Boudali",
+      company: "Orbiz Agency",
+      text: "Fayez built our agency's portfolio site and it honestly wowed our own clients. Fast, responsive, and visually stunning — exactly what we needed to stand out.",
+    },
+    {
+      initials: "TH",
+      name: "Tom Harrington",
+      company: "Stackly",
+      text: "Fayez joined us as a full-stack developer and handled both the React front-end and Node.js API. His code is clean, well-structured, and he shipped features on schedule every sprint.",
+    },
+    {
+      initials: "NF",
+      name: "Nora Fahim",
+      company: "Designora",
+      text: "The UX audit Fayez delivered was incredibly thorough. He identified friction points we had missed for months and gave us clear, actionable fixes. Our conversion rate improved noticeably after.",
+    },
+    {
+      initials: "AC",
+      name: "Alex Chen",
+      company: "Launchpad HQ",
+      text: "Fayez designed and developed our MVP landing page in record time. The attention to typography, spacing, and micro-animations made it feel like a top-tier product from day one.",
+    },
+  ];
+
   const projectsPerPage = 3;
   const totalPages = Math.ceil(projects.length / projectsPerPage);
   const paginatedProjects = projects.slice((currentProjectPage - 1) * projectsPerPage, currentProjectPage * projectsPerPage);
-
-  const testimonials = [
-    {
-      initials: "HN",
-      name: "Dr. Harold Nelson",
-      company: "Nelson Diagnostics",
-      text: "The 3D design team delivered our medical animations on time and the quality was outstanding. They really helped us capture the complex details.",
-    },
-    {
-      initials: "SJ",
-      name: "Sarah Jenkins",
-      company: "Impact Creative",
-      text: "Their attention to detail and ability to bring our brand to life with stunning 3D renders exceeded our expectations. Highly recommended!",
-    },
-    {
-      initials: "DL",
-      name: "David Lee",
-      company: "Pixel Forge",
-      text: "The 3D character design they created for our brand was exceptional. It brought a dynamic edge to our marketing campaign.",
-    },
-    {
-      initials: "EW",
-      name: "Emily Watson",
-      company: "Scaler",
-      text: "High-quality renders that helped us pitch our product successfully to investors. Great communication throughout.",
-    },
-    {
-      initials: "MA",
-      name: "Marcus Aurelius",
-      company: "Violeta Red",
-      text: "Outstanding 3D modeling work that was optimized perfectly for our workflow. Will definitely collaborate again.",
-    },
-    {
-      initials: "SM",
-      name: "Sophia Martinez",
-      company: "Proudshare",
-      text: "The 3D animations they produced for our product launch were breathtaking. Truly raised the bar for our brand.",
-    },
-  ];
 
   return (
     <div className="bg-bg-dark text-white w-full overflow-x-hidden">
@@ -265,21 +291,31 @@ export default function Home() {
         </ul>
       </nav>
 
-      {/* Hero Section */}
+      {/* ── Hero Section ──────────────────────────────────────────────── */}
       <section
         id="home"
         className="w-full min-h-[135vh] relative overflow-hidden bg-[#000000] flex flex-col justify-between pt-32 pb-16 px-8 md:block"
       >
         {/* Subtle blue vertical edge lights */}
-        <div className="edge-glow-left" />
-        <div className="edge-glow-right" />
+        <motion.div
+          className="edge-glow-left"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2, ease: "easeOut" }}
+        />
+        <motion.div
+          className="edge-glow-right"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2, ease: "easeOut", delay: 0.2 }}
+        />
 
-        {/* Main Headline (Top-aligned, below nav links, behind the avatar) */}
+        {/* Main Headline (Desktop) */}
         <div className="hidden md:block relative z-10 w-full text-center pointer-events-none md:absolute md:top-[90px] md:left-0 md:w-full">
           <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 60, filter: "blur(16px)" }}
+            animate={{ opacity: 1, y: 0,  filter: "blur(0px)" }}
+            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
             className="font-poppins font-black uppercase text-center select-none leading-[0.82] tracking-[-0.04em] headline-gradient w-full"
             style={{
               fontSize: "clamp(5rem, 13.5vw, 18rem)",
@@ -288,27 +324,30 @@ export default function Home() {
               display: "block",
             }}
           >
-            Hi, I’m Fayez
+            Hi, I&apos;m Fayez
           </motion.h1>
         </div>
 
-        {/* Mobile Headline (Top-aligned, below nav links) */}
+        {/* Mobile Headline */}
         <div className="md:hidden relative z-10 w-full text-center pointer-events-none mt-4">
           <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
+            animate={{ opacity: 1, y: 0,  filter: "blur(0px)" }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
             className="font-poppins font-black uppercase text-center select-none leading-[0.82] tracking-[-0.04em] headline-gradient w-full"
-            style={{
-              fontSize: "clamp(4.5rem, 18vw, 6.5rem)",
-            }}
+            style={{ fontSize: "clamp(4.5rem, 18vw, 6.5rem)" }}
           >
-            Hi, I’m Fayez
+            Hi, I&apos;m Fayez
           </motion.h1>
         </div>
 
-        {/* Mobile/Tablet Subtext - Below title, above avatar */}
-        <div className="md:hidden text-center z-30 mt-4 px-4 pointer-events-none">
+        {/* Mobile subtext */}
+        <motion.div
+          className="md:hidden text-center z-30 mt-4 px-4 pointer-events-none"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.35 }}
+        >
           <p className="text-[#a1a1aa] font-body font-semibold uppercase tracking-[0.06em] leading-[1.5] text-xs">
             UI/UX DESIGNER • <br />
             FRONT-END DEVELOPER • <br />
@@ -317,82 +356,96 @@ export default function Home() {
             MEMORABLE DIGITAL <br />
             EXPERIENCES 😄
           </p>
-        </div>
+        </motion.div>
 
-        {/* Avatar Container — with mouse-parallax tilt */}
-        <div className="relative w-full h-[360px] flex items-center justify-center z-20 pointer-events-none md:absolute md:top-[170px] md:left-1/2 md:-translate-x-1/2 md:max-w-[550px] md:h-[550px]">
-          <div
-            className="w-full h-full pointer-events-auto"
-            style={{
-              transform: `perspective(800px) rotateX(${avatarTilt.x}deg) rotateY(${avatarTilt.y}deg)`,
-              transition: "transform 0.15s cubic-bezier(0.25,1,0.5,1)",
-            }}
-          >
+        {/* Avatar Container */}
+        <motion.div
+          className="relative w-full h-[360px] flex items-center justify-center z-20 pointer-events-none md:absolute md:top-[170px] md:left-1/2 md:-translate-x-1/2 md:max-w-[550px] md:h-[550px]"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+        >
+          <div className="w-full h-full pointer-events-auto">
             <UserAvatar isMobile={isMobile} />
           </div>
-        </div>
+        </motion.div>
 
-        {/* Bottom Flanking Controls (Desktop aligned to H and z edges, in front of avatar) */}
+        {/* Desktop flanking controls */}
         <div className="hidden md:flex justify-between items-end w-[82vw] absolute md:left-1/2 md:-translate-x-1/2 md:top-[250px] lg:top-[280px] xl:top-[310px] md:z-30 pointer-events-none">
-          {/* Left Subtext */}
-          <div 
+          {/* Left subtext */}
+          <motion.div
             className="text-[#a1a1aa] font-body font-semibold uppercase tracking-[0.06em] leading-[1.6] text-left max-w-sm lg:max-w-md pointer-events-none"
-            style={{
-              fontSize: "clamp(1.1rem, 1.45vw, 1.4rem)",
-            }}
+            style={{ fontSize: "clamp(1.1rem, 1.45vw, 1.4rem)" }}
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
           >
             UI/UX DESIGNER • FRONT-END <br />
             DEVELOPER • FULL-STACK CREATOR <br />
             BUILDING MODERN AND <br />
             MEMORABLE DIGITAL <br />
             EXPERIENCES 😄
-          </div>
+          </motion.div>
 
-          {/* Right CTA Button */}
-          <div className="pointer-events-auto">
+          {/* Right CTA */}
+          <motion.div
+            className="pointer-events-auto"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.6 }}
+          >
             <a
               href="#contact"
               className="px-12 py-6 rounded-full text-sm md:text-base font-bold uppercase tracking-[0.14em] neon-btn-gradient text-white text-center flex items-center justify-center font-body"
             >
               CONTACT ME
             </a>
-          </div>
+          </motion.div>
         </div>
 
-        {/* Mobile Bottom Wrapper */}
-        <div className="md:hidden w-full flex justify-center items-center z-30 px-8 pb-4">
+        {/* Mobile bottom CTA */}
+        <motion.div
+          className="md:hidden w-full flex justify-center items-center z-30 px-8 pb-4"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.55 }}
+        >
           <a
             href="#contact"
             className="px-10 py-5 rounded-full text-xs font-bold uppercase tracking-[0.12em] neon-btn-gradient text-white text-center w-full font-body"
           >
             CONTACT ME
           </a>
-        </div>
+        </motion.div>
 
         {/* Scroll Down Indicator */}
-        <div className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center z-30 pointer-events-none opacity-80">
+        <motion.div
+          className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center z-30 pointer-events-none opacity-80"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.8 }}
+          transition={{ duration: 1, delay: 1.1 }}
+        >
           <span className="text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase mb-3 text-white">
             SCROLL DOWN
           </span>
           <div className="w-[26px] h-[40px] rounded-full border-2 border-white/40 flex justify-center p-1">
             <motion.div
-              animate={{
-                y: [0, 12, 0],
-                opacity: [1, 0.5, 1],
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
+              animate={{ y: [0, 12, 0], opacity: [1, 0.5, 1] }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
               className="w-1.5 h-1.5 rounded-full bg-accent-violet shadow-[0_0_8px_rgba(124,58,237,0.8)]"
             />
           </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* Infinite Logo Showcase Ribbon */}
-      <section className="border-y border-white/6 py-6 overflow-hidden bg-[#000000] w-full">
+      {/* ── Logo Ribbon ───────────────────────────────────────────────── */}
+      <motion.section
+        className="border-y border-white/6 py-6 overflow-hidden bg-[#000000] w-full"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={viewportOnce}
+        transition={{ duration: 0.8 }}
+      >
         <div className="w-full overflow-hidden flex">
           <div className="animate-marquee whitespace-nowrap flex items-center gap-16">
             {Array(4)
@@ -423,58 +476,81 @@ export default function Home() {
               ))}
           </div>
         </div>
-      </section>
+      </motion.section>
 
-      {/* Bento Gallery Grid Section */}
-      <section className="bg-[#000000] py-4 px-3 md:px-4 w-full fade-up">
-        <div className="w-full">
-          {/* Top row — 3 equal columns */}
+      {/* ── Bento Gallery ─────────────────────────────────────────────── */}
+      <section className="bg-[#000000] py-4 px-3 md:px-4 w-full">
+        <motion.div
+          className="w-full"
+          variants={v(staggerContainer(0.08, 0.1))}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+        >
+          {/* Top row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
             {[
               { src: "/assets/gallery1.png", alt: "Macro abstract 1" },
               { src: "/assets/gallery2.png", alt: "Macro abstract 2" },
               { src: "/assets/gallery3.png", alt: "Macro abstract 3" },
             ].map((img, i) => (
-              <div key={i} className="relative rounded-2xl overflow-hidden aspect-[4/3] gallery-img">
+              <motion.div
+                key={i}
+                variants={v(scaleIn)}
+                className="relative rounded-2xl overflow-hidden aspect-[4/3] gallery-img"
+              >
                 <Image src={img.src} alt={img.alt} fill className="object-cover" />
-              </div>
+              </motion.div>
             ))}
           </div>
-          {/* Bottom row — wide + narrow */}
+          {/* Bottom row */}
           <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr] gap-3">
-            <div className="relative rounded-2xl overflow-hidden aspect-[16/7] gallery-img">
+            <motion.div variants={v(slideLeft)} className="relative rounded-2xl overflow-hidden aspect-[16/7] gallery-img">
               <Image src="/assets/gallery4.png" alt="Macro abstract 4" fill className="object-cover" />
-            </div>
-            <div className="relative rounded-2xl overflow-hidden aspect-[4/3] gallery-img">
+            </motion.div>
+            <motion.div variants={v(scaleIn)} className="relative rounded-2xl overflow-hidden aspect-[4/3] gallery-img">
               <Image src="/assets/gallery5.png" alt="Macro abstract 5" fill className="object-cover" />
-            </div>
-            <div className="relative rounded-2xl overflow-hidden aspect-[4/3] gallery-img">
+            </motion.div>
+            <motion.div variants={v(slideRight)} className="relative rounded-2xl overflow-hidden aspect-[4/3] gallery-img">
               <Image src="/assets/gallery6.png" alt="Macro abstract 6" fill className="object-cover" />
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* About Me Section */}
-      <section id="about" className="relative bg-[#000000] overflow-hidden py-28 w-full fade-up">
-        {/* 3D Left Canvas — Star (top-left) + Heart (bottom-left) */}
+      {/* ── About Me Section ──────────────────────────────────────────── */}
+      <section id="about" className="relative bg-[#000000] overflow-hidden py-28 w-full">
+        {/* 3D canvases */}
         <div className="absolute left-0 top-0 w-52 h-full z-0 pointer-events-none hidden md:block">
           <AboutLeftCanvas />
         </div>
-        {/* 3D Right Canvas — Gem (top-right) + Flower (bottom-right) */}
         <div className="absolute right-0 top-0 w-52 h-full z-0 pointer-events-none hidden md:block">
           <AboutRightCanvas />
         </div>
 
-        <div className="relative z-10 w-full max-w-3xl mx-auto px-8 text-center flex flex-col items-center">
-          <h2
-            className="font-heading font-extrabold uppercase tracking-tight text-white leading-none mb-10"
-            style={{ fontSize: "clamp(4rem, 12vw, 9rem)" }}
+        <motion.div
+          className="relative z-10 w-full max-w-3xl mx-auto px-8 text-center flex flex-col items-center"
+          variants={v(staggerContainer(0.14, 0))}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewportOnce}
+        >
+          <motion.h2
+            variants={v(headingReveal)}
+            className="font-poppins font-black uppercase text-center select-none text-white leading-[0.82] tracking-[-0.04em]"
+            style={{
+              fontSize: "clamp(3.8rem, 11vw, 9rem)",
+              transform: "scale(1.25, 0.65)",
+              transformOrigin: "center top",
+              display: "block",
+              marginBottom: "4.5rem",
+            }}
           >
             ABOUT ME
-          </h2>
+          </motion.h2>
 
-          <p
+          <motion.p
+            variants={v(blurUp)}
             className="font-body font-normal leading-relaxed mb-10"
             style={{ fontSize: "clamp(0.95rem, 1.6vw, 1.15rem)", color: "#A0A0A0" }}
           >
@@ -485,38 +561,55 @@ export default function Home() {
             My goal is to make every project look professional, memorable, and easy to use.
             <br />
             Let&apos;s build something amazing together!
-          </p>
+          </motion.p>
 
-          <a
+          <motion.a
+            variants={v(fadeUp)}
             href="#contact"
             className="px-12 py-6 rounded-full text-sm md:text-base font-bold uppercase tracking-[0.14em] neon-btn-gradient text-white flex items-center justify-center font-body"
           >
             CONTACT ME
-          </a>
-        </div>
+          </motion.a>
+        </motion.div>
       </section>
 
-      {/* Services Section */}
+      {/* ── Services Section ──────────────────────────────────────────── */}
       <section
         id="services"
         ref={servicesRef}
-        className="py-28 border-b border-white/6 relative z-10 bg-[#000000] text-white fade-up"
+        className="py-28 border-b border-white/6 relative z-10 bg-[#000000] text-white"
       >
         <div className="max-w-5xl mx-auto px-8">
           {/* Heading */}
-          <div className="text-center mb-16">
-            <h2
-              className="font-heading font-extrabold uppercase tracking-tight text-outline-white leading-none"
-              style={{ fontSize: "clamp(4.5rem, 13vw, 10rem)" }}
+          <div className="text-center mb-16 overflow-hidden">
+            <motion.h2
+              variants={v(headingReveal)}
+              initial="hidden"
+              whileInView="show"
+              viewport={viewportOnce}
+              className="font-poppins font-black uppercase select-none text-white leading-[0.82] tracking-[-0.04em]"
+              style={{
+                fontSize: "clamp(4rem, 13vw, 10rem)",
+                transform: "scale(1.25, 0.65)",
+                transformOrigin: "center top",
+                display: "block",
+              }}
             >
               SERVICES
-            </h2>
+            </motion.h2>
           </div>
 
-          <div className="flex flex-col border-t border-white/10">
+          <motion.div
+            className="flex flex-col border-t border-white/10"
+            variants={v(staggerContainer(0.1, 0.05))}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportOnce}
+          >
             {services.map((service, idx) => (
-              <div
+              <motion.div
                 key={idx}
+                variants={v(slideLeft)}
                 className="service-row relative py-8 px-2 border-b border-white/10 grid grid-cols-[auto_1fr] gap-8 md:gap-14 items-start cursor-pointer group"
                 onMouseEnter={() => setHoveredService(idx)}
                 onMouseLeave={() => setHoveredService(null)}
@@ -531,7 +624,7 @@ export default function Home() {
                   {service.num}
                 </span>
 
-                {/* Title + Description stacked */}
+                {/* Title + Description */}
                 <div className="flex flex-col justify-center pt-2">
                   <h3
                     className="font-poppins font-black uppercase tracking-tight leading-none mb-2"
@@ -554,34 +647,50 @@ export default function Home() {
                     {service.desc}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* Projects Section — CSS-only sticky stacking cards */}
-      <section id="projects" className="bg-[#000000] py-28 relative fade-up">
+      {/* ── Projects Section ──────────────────────────────────────────── */}
+      <section id="projects" className="bg-[#000000] py-28 relative">
         <div className="max-w-7xl mx-auto px-6 md:px-8">
-          {/* Section heading */}
-          <div className="mb-16">
-            <h2
-              className="font-poppins font-black uppercase tracking-tight text-outline-white leading-none text-center"
-              style={{ fontSize: "clamp(4.5rem, 13vw, 10rem)" }}
+          {/* Heading */}
+          <div className="mb-16 overflow-hidden">
+            <motion.h2
+              variants={v(headingReveal)}
+              initial="hidden"
+              whileInView="show"
+              viewport={viewportOnce}
+              className="font-poppins font-black uppercase text-center select-none text-white leading-[0.82] tracking-[-0.04em]"
+              style={{
+                fontSize: "clamp(4rem, 13vw, 10rem)",
+                transform: "scale(1.25, 0.65)",
+                transformOrigin: "center top",
+                display: "block",
+              }}
             >
               PROJECTS
-            </h2>
+            </motion.h2>
           </div>
 
           {/* Row list */}
-          <div className="flex flex-col border-t border-white/10">
+          <motion.div
+            className="flex flex-col border-t border-white/10"
+            variants={v(staggerContainer(0.12, 0))}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportOnce}
+          >
             {paginatedProjects.map((project, idx) => {
               const isHovered = hoveredProject === idx;
               const isOtherHovered = hoveredProject !== null && hoveredProject !== idx;
 
               return (
-                <div
+                <motion.div
                   key={idx}
+                  variants={v(fadeUp)}
                   className={`group flex flex-col lg:flex-row items-center justify-between border-b border-white/10 py-8 lg:py-10 px-4 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
                     isHovered ? "bg-[#0f0f11]" : "bg-transparent"
                   } ${isOtherHovered ? "opacity-30 grayscale saturate-0" : "opacity-100"}`}
@@ -664,7 +773,7 @@ export default function Home() {
                     </div>
                   </div>
 
-                  {/* Right Zone: CTA Button — with magnetic scale on hover */}
+                  {/* Right Zone: CTA Button */}
                   <div className="w-full lg:w-1/4 flex justify-end items-center">
                     <a
                       href="#"
@@ -679,14 +788,20 @@ export default function Home() {
                       LIVE PROJECT
                     </a>
                   </div>
-                </div>
+                </motion.div>
               );
             })}
-          </div>
+          </motion.div>
 
           {/* Pagination Controls */}
           {totalPages > 1 && (
-            <div className="flex justify-center items-center gap-2 mt-12">
+            <motion.div
+              className="flex justify-center items-center gap-2 mt-12"
+              variants={v(fadeUp)}
+              initial="hidden"
+              whileInView="show"
+              viewport={viewportOnce}
+            >
               {Array.from({ length: totalPages }).map((_, i) => (
                 <button
                   key={i}
@@ -700,41 +815,56 @@ export default function Home() {
                   {i + 1}
                 </button>
               ))}
-            </div>
+            </motion.div>
           )}
         </div>
       </section>
 
-      {/* Testimonials Section */}
-      <section id="testimonials" className="py-24 bg-[#000000] border-b border-white/6 relative fade-up">
+      {/* ── Testimonials Section ──────────────────────────────────────── */}
+      <section id="testimonials" className="py-24 bg-[#000000] border-b border-white/6 relative">
         <div className="max-w-6xl mx-auto px-6 md:px-8">
           {/* Heading */}
-          <div className="text-center mb-14">
-            <h2
-              className="font-poppins font-black uppercase tracking-tight leading-none text-outline-white"
-              style={{ fontSize: "clamp(3.5rem, 8vw, 7rem)" }}
+          <div className="text-center mb-14 overflow-hidden">
+            <motion.h2
+              variants={v(headingReveal)}
+              initial="hidden"
+              whileInView="show"
+              viewport={viewportOnce}
+              className="font-poppins font-black uppercase select-none text-white leading-[0.82] tracking-[-0.04em]"
+              style={{
+                fontSize: "clamp(3rem, 9vw, 8rem)",
+                transform: "scale(1.25, 0.65)",
+                transformOrigin: "center top",
+                display: "block",
+              }}
             >
               CLIENT REVIEWS
-            </h2>
+            </motion.h2>
           </div>
 
-          {/* Bento grid — Row 1: 3 equal columns */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+          {/* Row 1 */}
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3"
+            variants={v(staggerContainer(0.1, 0.05))}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportOnce}
+          >
             {testimonials.slice(0, 3).map((t, idx) => (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-5%" }}
-                transition={{ duration: 0.6, delay: idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                variants={v(blurUp)}
+                whileHover={shouldReduceMotion ? {} : {
+                  y: -6,
+                  boxShadow: "0 12px 40px rgba(139,92,246,0.18)",
+                  borderColor: "rgba(255,255,255,0.18)",
+                  transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+                }}
                 className="bento-card p-6 flex flex-col justify-between min-h-[200px]"
               >
-                {/* Quote */}
                 <p className="text-sm leading-relaxed" style={{ color: "#A0A0A0" }}>
                   &quot;{t.text}&quot;
                 </p>
-
-                {/* Author */}
                 <div className="flex items-center gap-3 mt-6">
                   <div
                     className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-xs border border-white/10"
@@ -749,35 +879,37 @@ export default function Home() {
                     {t.initials}
                   </div>
                   <div>
-                    <p className="text-white font-bold text-xs uppercase tracking-wider leading-tight">
-                      {t.name}
-                    </p>
-                    <p className="text-zinc-500 text-[11px] tracking-wide font-medium mt-0.5">
-                      {t.company}
-                    </p>
+                    <p className="text-white font-bold text-xs uppercase tracking-wider leading-tight">{t.name}</p>
+                    <p className="text-zinc-500 text-[11px] tracking-wide font-medium mt-0.5">{t.company}</p>
                   </div>
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
 
-          {/* Bento grid — Row 2: 3 equal columns */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {/* Row 2 */}
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-3"
+            variants={v(staggerContainer(0.1, 0.05))}
+            initial="hidden"
+            whileInView="show"
+            viewport={viewportOnce}
+          >
             {testimonials.slice(3, 6).map((t, idx) => (
               <motion.div
                 key={idx + 3}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-5%" }}
-                transition={{ duration: 0.6, delay: idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                variants={v(blurUp)}
+                whileHover={shouldReduceMotion ? {} : {
+                  y: -6,
+                  boxShadow: "0 12px 40px rgba(139,92,246,0.18)",
+                  borderColor: "rgba(255,255,255,0.18)",
+                  transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+                }}
                 className="bento-card p-6 flex flex-col justify-between min-h-[200px]"
               >
-                {/* Quote */}
                 <p className="text-sm leading-relaxed" style={{ color: "#A0A0A0" }}>
                   &quot;{t.text}&quot;
                 </p>
-
-                {/* Author */}
                 <div className="flex items-center gap-3 mt-6">
                   <div
                     className="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-white font-bold text-xs border border-white/10"
@@ -792,51 +924,55 @@ export default function Home() {
                     {t.initials}
                   </div>
                   <div>
-                    <p className="text-white font-bold text-xs uppercase tracking-wider leading-tight">
-                      {t.name}
-                    </p>
-                    <p className="text-zinc-500 text-[11px] tracking-wide font-medium mt-0.5">
-                      {t.company}
-                    </p>
+                    <p className="text-white font-bold text-xs uppercase tracking-wider leading-tight">{t.name}</p>
+                    <p className="text-zinc-500 text-[11px] tracking-wide font-medium mt-0.5">{t.company}</p>
                   </div>
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-
-      {/* Contact Section */}
+      {/* ── Contact Section ───────────────────────────────────────────── */}
       <section
         id="contact"
-        className="relative overflow-hidden bg-[#000000] text-white fade-up"
+        className="relative overflow-hidden bg-[#000000] text-white"
       >
-        {/* Subtle top border */}
         <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
 
         <div className="max-w-6xl mx-auto px-6 md:px-8 py-28">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
 
             {/* Left — Heading + email */}
-            <div>
-              <h2
+            <motion.div
+              variants={v(staggerContainer(0.15, 0))}
+              initial="hidden"
+              whileInView="show"
+              viewport={viewportOnce}
+            >
+              <motion.h2
+                variants={v(slideLeft)}
                 className="font-poppins font-black text-white uppercase leading-[0.9] tracking-tight mb-8"
                 style={{ fontSize: "clamp(2.8rem, 6vw, 5rem)" }}
               >
                 LET&apos;S<br />
                 GET IN<br />
                 TOUCH
-              </h2>
-              <a
+              </motion.h2>
+              <motion.a
+                variants={v(fadeUp)}
                 href="mailto:fayezmorsel77@gmail.com"
                 className="text-lg md:text-xl font-semibold underline underline-offset-4 decoration-white/30 hover:decoration-white transition-all duration-300"
                 style={{ color: "#A0A0A0" }}
               >
                 fayezmorsel77@gmail.com
-              </a>
-              <div className="mt-10 flex gap-4">
-                {["Twitter", "LinkedIn", "GitHub", "Dribbble"].map((s) => (
+              </motion.a>
+              <motion.div
+                variants={v(fadeUp)}
+                className="mt-10 flex gap-4 flex-wrap"
+              >
+                {["Twitter", "LinkedIn", "GitHub", "YouTube"].map((s) => (
                   <a
                     key={s}
                     href="#"
@@ -846,14 +982,20 @@ export default function Home() {
                     {s}
                   </a>
                 ))}
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
-            {/* Right — Minimal underline form */}
-            <form className="flex flex-col gap-8" onSubmit={handleSubmit}>
-
+            {/* Right — Form */}
+            <motion.form
+              className="flex flex-col gap-8"
+              onSubmit={handleSubmit}
+              variants={v(staggerContainer(0.12, 0.1))}
+              initial="hidden"
+              whileInView="show"
+              viewport={viewportOnce}
+            >
               {/* Full Name */}
-              <div className="flex flex-col gap-2">
+              <motion.div variants={v(slideRight)} className="flex flex-col gap-2">
                 <label htmlFor="contact-name" className="text-[11px] font-bold uppercase tracking-widest" style={{ color: "#606060" }}>
                   Full Name*
                 </label>
@@ -862,10 +1004,10 @@ export default function Home() {
                   className="bg-transparent border-0 border-b border-white/15 pb-3 text-base text-white focus:outline-none focus:border-white/50 transition-colors placeholder:text-white/20"
                   placeholder=""
                 />
-              </div>
+              </motion.div>
 
               {/* Email + Phone */}
-              <div className="grid grid-cols-2 gap-6">
+              <motion.div variants={v(slideRight)} className="grid grid-cols-2 gap-6">
                 <div className="flex flex-col gap-2">
                   <label htmlFor="contact-email" className="text-[11px] font-bold uppercase tracking-widest" style={{ color: "#606060" }}>Email*</label>
                   <input type="email" id="contact-email" required className="bg-transparent border-0 border-b border-white/15 pb-3 text-base text-white focus:outline-none focus:border-white/50 transition-colors placeholder:text-white/20" placeholder="" />
@@ -874,27 +1016,33 @@ export default function Home() {
                   <label htmlFor="contact-phone" className="text-[11px] font-bold uppercase tracking-widest" style={{ color: "#606060" }}>Phone</label>
                   <input type="tel" id="contact-phone" className="bg-transparent border-0 border-b border-white/15 pb-3 text-base text-white focus:outline-none focus:border-white/50 transition-colors placeholder:text-white/20" placeholder="" />
                 </div>
-              </div>
+              </motion.div>
 
               {/* Message */}
-              <div className="flex flex-col gap-2">
+              <motion.div variants={v(slideRight)} className="flex flex-col gap-2">
                 <label htmlFor="contact-message" className="text-[11px] font-bold uppercase tracking-widest" style={{ color: "#606060" }}>Message</label>
                 <textarea id="contact-message" rows={3} className="bg-transparent border-0 border-b border-white/15 pb-3 text-base text-white focus:outline-none focus:border-white/50 transition-colors resize-none placeholder:text-white/20" placeholder="" />
-              </div>
+              </motion.div>
 
               {/* SEND */}
-              <div>
+              <motion.div variants={v(scaleIn)}>
                 <button type="submit" className="px-16 py-4 rounded-full border border-white/20 text-white text-sm font-bold uppercase tracking-[0.2em] hover:bg-white hover:text-black transition-all duration-400">
                   SEND MESSAGE
                 </button>
-              </div>
-            </form>
+              </motion.div>
+            </motion.form>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-white/6 py-16 relative bg-[#000000] z-10">
+      {/* ── Footer ────────────────────────────────────────────────────── */}
+      <motion.footer
+        className="border-t border-white/6 py-16 relative bg-[#000000] z-10"
+        variants={v(fadeUp)}
+        initial="hidden"
+        whileInView="show"
+        viewport={viewportOnce}
+      >
         <div className="max-w-6xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-8">
           <div>
             <h2 className="font-heading font-extrabold text-4xl uppercase tracking-tighter text-white mb-1">
@@ -908,7 +1056,7 @@ export default function Home() {
             <FooterCanvas />
           </div>
         </div>
-      </footer>
+      </motion.footer>
     </div>
   );
 }
