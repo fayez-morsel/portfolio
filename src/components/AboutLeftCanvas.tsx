@@ -15,7 +15,7 @@ export default function AboutLeftCanvas() {
       </div>
 
       {/* Heart (bottom-left) */}
-      <div className="absolute bottom-[15%] right-[15%] w-[130px] h-[130px] animate-float-2">
+      <div className="absolute bottom-[15%] right-[15%] w-[130px] h-[130px] animate-float-3">
         <img
           src="/assets/floating_heart.png"
           alt="Floating Heart"
